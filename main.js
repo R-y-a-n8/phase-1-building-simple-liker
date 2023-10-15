@@ -3,7 +3,10 @@ const EMPTY_HEART = '♡'
 const FULL_HEART = '♥'
 
 // Your JavaScript code goes here!
+const errorModal = document.querySelector(".modal");
+const errorMessage = document.getElementById("error-message");
 
+errorModal.classList.add("hidden");
 
 
 
@@ -21,5 +24,36 @@ function mimicServerCall(url="http://mimicServer.example.com", config={}) {
         resolve("Pretend remote server notified of action!");
       }
     }, 300);
+  });
+}
+
+
+function toggleHeart(heart) {
+  if (heart.classList.contains("activated-heart")) {
+    heart.classList.remove("activated-heart");
+    heart.innerText = EMPTY_HEART;
+  } else {
+    mimicServerCall()
+      .then(() => {
+        heart.classList.add("activated-heart");
+        heart.innerText = FULL_HEART;
+      })
+      .catch((error) => {
+        errorMessage.textContent = error;
+        errorModal.classList.remove("hidden");
+        setTimeout(() => {
+          errorModal.classList.add("hidden");
+        }, 3000);
+      });
+  }
+}
+
+document.addEventListener("DOMContentLoaded"), function () {
+  const hearts = document.querySelectorAll(".like-glyph");
+
+  hearts.forEach((heart) => {
+    heart.addEventListener("click", function () {
+      toggleHeart(heart);
+    });
   });
 }
